@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         mRecyclerView = (SimpleRecyclerView) findViewById(R.id.recyclerView);
+        setupRecyclerViewHeaders();
     }
 
     @Override
@@ -63,6 +64,35 @@ public class MainActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void setupRecyclerViewHeaders() {
+        mRecyclerView.setSectionHeader(new SectionHeaderProviderAdapter<Comment>() {
+            @NonNull
+            @Override
+            public View getSectionHeaderView(Comment item, int position) {
+                View view = LayoutInflater.from(MainActivity.this).inflate(R.layout.view_section_header, null, false);
+                TextView textView = (TextView) view.findViewById(R.id.textView);
+                String text = "Post ID: " + item.getPostId();
+                textView.setText(text);
+                return view;
+            }
+
+            @Override
+            public boolean isSameSection(Comment item, Comment nextItem) {
+                return item.getPostId() == nextItem.getPostId();
+            }
+
+            @Override
+            public boolean isSticky() {
+                return true;
+            }
+
+            @Override
+            public int getSectionHeaderMarginTop(Comment item, int position) {
+                return 0;
+            }
+        });
     }
 
     private void setupRecyclerView() {
@@ -128,36 +158,7 @@ public class MainActivity extends AppCompatActivity {
             super.onPostExecute(list);
 
             mRecyclerView.addCells(list);
-            setupRecyclerViewHeaders();
-        }
 
-        private void setupRecyclerViewHeaders() {
-            mRecyclerView.setSectionHeader(new SectionHeaderProviderAdapter<Comment>() {
-                @NonNull
-                @Override
-                public View getSectionHeaderView(Comment item, int position) {
-                    View view = LayoutInflater.from(MainActivity.this).inflate(R.layout.view_section_header, null, false);
-                    TextView textView = (TextView) view.findViewById(R.id.textView);
-                    String text = "Post ID: " + item.getPostId();
-                    textView.setText(text);
-                    return view;
-                }
-
-                @Override
-                public boolean isSameSection(Comment item, Comment nextItem) {
-                    return item.getPostId() == nextItem.getPostId();
-                }
-
-                @Override
-                public boolean isSticky() {
-                    return true;
-                }
-
-                @Override
-                public int getSectionHeaderMarginTop(Comment item, int position) {
-                    return 0;
-                }
-            });
         }
     }
 }
